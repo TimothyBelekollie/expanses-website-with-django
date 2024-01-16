@@ -135,5 +135,22 @@ class LoginView(View):
             if user:
                 if user.is_active:
                     auth.login(request,user)
-                    messages.successs(request, 'Welcome, '+user.username+' You are now logged in')
+                    messages.success(request, 'Welcome '+user.username+', You are now logged in')
+                    return redirect('expenses.index')
+                    
+                messages.error(request,'Your account is not activated, please check your email that you register with or trying using an official email becuase you will get a notification in my mail')
+                return render(request, 'authentication/login.html')
+            messages.error(request,'Invalid Crendentials, try again')
+            return render(request, 'authentication/login.html')
+        
+        messages.error(request,'Please fill all fields')
+        return render(request, 'authentication/login.html')
+        
+        
             
+
+class LogoutView(View):
+    def post(self, request):
+        auth.logout(request)
+        messages.success(request, 'You have logout Successfully')
+        return redirect('login')
