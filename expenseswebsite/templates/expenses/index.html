@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {%block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"></div>
+
+<div class="row">
+<div class="col-md-10">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Expenses</li>
+          <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'expenses.index' %}">My Expenses</a></li>
+        </ol>
+      </nav>
+    </div>
+      <div class="col-md-2">
+        <a class="btn btn-primary" href="{% url 'expenses.add' %}">Add Expense</a>
+      </div>
+   
+</div>
 {% include 'partials/_messages.html'%}
 <h1>Expense List</h1>
 
