@@ -7,8 +7,9 @@ from django.contrib import messages
 @login_required(login_url='/authentication/login')
 def index(request):
     categories=Category.objects.all()
-    context={"categories":categories}
-    return render(request, 'expenses/index.html')
+    expenses=Expense.objects.filter(owner=request.user).order_by('-date')
+    context={"categories":categories, 'expenses':expenses}
+    return render(request, 'expenses/index.html',context)
 
 @login_required(login_url='/authentication/login')
 def add_expense(request):
@@ -28,6 +29,7 @@ def add_expense(request):
         description=request.POST['description']
         date=request.POST['date']
         category=request.POST['category']
+        
         
         if not description:
             messages.error(request, 'Description is required ')
