@@ -2,13 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Category,Expense
 from django.contrib import messages
+from django.core.paginator import Paginator # this is for pagination.
 
 # Create your views here.
 @login_required(login_url='/authentication/login')
 def index(request):
     categories=Category.objects.all()
     expenses=Expense.objects.filter(owner=request.user).order_by('-date')
-    context={"categories":categories, 'expenses':expenses}
+    paginator=Paginator(expenses,2)
+    page_Number=request.GET.get('page')
+    page_obj=Paginator.get_page(paginator, page_Number)
+    context={"categories":categories, 'expenses':expenses,'page_obj':page_obj}
     return render(request, 'expenses/index.html',context)
 
 @login_required(login_url='/authentication/login')
@@ -74,6 +78,13 @@ def edit_expense(request,pk):
             
             messages.success(request, 'Expense updated successfully')
             return redirect('expenses.index')
+        
+        
+def destroy_expense(request, pk):
+    expense=Expense.objects.get(pk=pk)
+    expense.delete()
+    messages.error(request, 'You have successfully deleted an expense')
+    return redirect('expenses.index')
         
     
         
