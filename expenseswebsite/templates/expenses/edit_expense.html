@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{%block content%}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"></div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'expenses.index' %}">Expenses</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Update Expense</li>
+    </ol>
+  </nav>
+
+
+<div class="card">
+
+    <div class="card-body">
+        <form action="{% url 'expenses.edit' expense.id %}" method="post">
+            {% csrf_token %}
+            {% include 'partials/_messages.html'%}
+        <div class="form-group">
+            <label for="">Amount</label>
+            <input type="number" name="amount" class="form-control form-control-sm" value="{{expense.amount}}">
+
+        </div>
+
+        <div class="form-group">
+            <label for="">Description</label>
+            <input type="text" name="description" class="form-control form-control-sm" value="{{expense.description}}">
+
+        </div>
+        <div class="form-group">
+            <label for="">Category</label>
+            <select name="category" id="" class="form-control form-control-sm">
+                <option selected name="category" value="{{values.category}}">{{values.category}}</option>
+                {% for category in categories %}
+                <option name="category" value="{{category.name}}">{{category.name}}</option>
+                {%endfor%}
+               
+            </select>
+
+        </div>
+
+        <div class="form-group">
+            <label for="">Date of Expense</label>
+            <input type="date" name="date" class="form-control form-control-sm" required value="{{ expense.date|date:'Y-m-d' }}">
+
+        </div>
+        <input type="submit" class="btn btn-primary btn-sm mt-2" value="Update">
+    </form>
+    </div>
+
+</div>
+
+
+{%endblock%}
