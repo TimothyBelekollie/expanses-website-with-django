@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Category,Expense
+from userpreferences.models import UserPreference
 from django.contrib import messages
 from django.core.paginator import Paginator # this is for pagination.
 import json
@@ -10,11 +11,11 @@ from django.http import JsonResponse
      
 @login_required(login_url='/authentication/login')
 def search_expenses(request):
-    if request.method == 'POST':
+      if request.method == 'POST':
         search_str = json.loads(request.body).get('searchText')
         expenses = Expense.objects.filter(
             amount__istartswith=search_str, owner=request.user) | Expense.objects.filter(
-            date__istartswith=search_str, owner=request.user) | Expense.objects.filter(
+            date__icontains=search_str, owner=request.user) | Expense.objects.filter(
             description__icontains=search_str, owner=request.user) | Expense.objects.filter(
             category__icontains=search_str, owner=request.user)
         data = expenses.values()
@@ -22,19 +23,16 @@ def search_expenses(request):
         
         
         
-        
-        
-    
-     
-     
+          
 @login_required(login_url='/authentication/login')
 def index(request):
     categories=Category.objects.all()
     expenses=Expense.objects.filter(owner=request.user).order_by('-date')
-    paginator=Paginator(expenses,2)
+    paginator=Paginator(expenses,10)
     page_Number=request.GET.get('page')
     page_obj=Paginator.get_page(paginator, page_Number)
-    context={"categories":categories, 'expenses':expenses,'page_obj':page_obj}
+    currency=UserPreference.objects.get(user=request.user).currency
+    context={"categories":categories, 'expenses':expenses,'page_obj':page_obj,'currency':currency}
     return render(request, 'expenses/index.html',context)
 
 @login_required(login_url='/authentication/login')
