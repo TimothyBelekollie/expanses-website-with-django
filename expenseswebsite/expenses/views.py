@@ -31,7 +31,13 @@ def index(request):
     paginator=Paginator(expenses,10)
     page_Number=request.GET.get('page')
     page_obj=Paginator.get_page(paginator, page_Number)
-    currency=UserPreference.objects.get(user=request.user).currency
+    # currency=UserPreference.objects.get(user=request.user).currency
+    try:
+        currency = UserPreference.objects.get(user=request.user).currency
+    except UserPreference.DoesNotExist:
+    # Handle the case where the preference doesn't exist for the user
+        currency = None  # or provide a default value
+    
     context={"categories":categories, 'expenses':expenses,'page_obj':page_obj,'currency':currency}
     return render(request, 'expenses/index.html',context)
 
